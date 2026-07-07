@@ -24,7 +24,7 @@ For the demo I cared to use **different code design patterns**, so I have micros
 * Entity relationship diagrams: [db-orders](Documentation/C4_Sales_System-db-orders.drawio.png), [db-catalog](Documentation/C4_Sales_System-db-catalog.drawio.png), [db-payment](Documentation/C4_Sales_System-db-payment.drawio.png). In case you wish to connect the database via DBeaver or other. 
 * The swaggers (only BFF will be externally exposed, but I provide internal swaggers as well):
 	* [bff](Documentation/swagger_bff.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_bff.json?token=GHSAT0AAAAAAECAAVB7W7Z27OQNAERJ2CPQ2SNKVJA)  
- 	* [order](Documentation/swagger_order-service.json) or at [swagger editor] [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_order-service.json?token=GHSAT0AAAAAAECAAVB6MZDP62N56ZR2ZUOO2SNKZAA)  
+ 	* [order](Documentation/swagger_order-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_order-service.json?token=GHSAT0AAAAAAECAAVB6MZDP62N56ZR2ZUOO2SNKZAA)  
   	* [catalog](Documentation/swagger_catalog-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_catalog-service.json?token=GHSAT0AAAAAAECAAVB7NXOZFLPKCF7YFFGK2SNK2BA)  
 
 ## Microservices:
