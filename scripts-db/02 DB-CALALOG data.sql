@@ -1,0 +1,86 @@
+USE db_catalog;
+
+-- 1. Populating Suppliers (ID 1 and 2 will be generated automatically)
+INSERT INTO suppliers (name, tax_id, contact_email) VALUES
+('Tech Components Ltd', '12.345.678/0001-99', 'sales@techcomponents.com'),
+('Global Apparel Corp', '98.765.432/0001-11', 'orders@globalapparel.com'),
+('Home & Comfort Data', '55.444.333/0001-22', 'b2b@homecomfort.com'),
+('Sports & Velocity', '44.333.222/0001-11', 'supply@velocity.com'),
+('Books & Media Dist', '33.222.111/0001-00', 'contact@booksdist.com');
+
+-- 2. Populating Products (Linking to the suppliers created above)
+-- Assumes Supplier 1 supplies tech, Supplier 2 supplies clothing
+INSERT INTO products (name, description, price, sku, supplier_id) VALUES
+('Mechanical Keyboard RGB', 'Wireless mechanical keyboard with brown switches', 89.99, 'TECH-KEYB-RGB-BR', 1),
+('Gaming Mouse 16000 DPI', 'Ergonomic gaming mouse with programmable buttons', 45.50, 'TECH-MOUSE-16K-ERG', 1),
+('Premium Cotton T-Shirt Black M', '100% organic cotton minimalist t-shirt', 29.90, 'APPA-TSHIRT-BLK-M', 2),
+('Premium Cotton T-Shirt Black L', '100% organic cotton minimalist t-shirt', 29.90, 'APPA-TSHIRT-BLK-L', 2),
+('Ergonomic Office Chair', 'Chair with height adjustment and lumbar support', 249.90, 'HOME-CHAIR-ERG-01', 3),
+('LED Desk Lamp', 'Touch control lamp with 3 intensity levels', 39.90, 'HOME-LAMP-LED-02', 3),
+('L-Shaped Office Desk', 'L-shaped desk made of MDF wood', 349.00, 'HOME-DESK-L-03', 3),
+('Cable Organizer Kit', 'Pack of 10 silicone cable organizers', 15.00, 'HOME-CABLE-ORG-04', 3),
+('Memory Foam Cushion', 'Orthopedic seat cushion for office chairs', 79.90, 'HOME-CUSH-VIS-05', 3),
+('Dual Monitor Mount', 'Articulated monitor arm with desk clamp', 189.90, 'HOME-MONI-SUP-06', 3),
+('Deskpad Keyboard Mat', 'Synthetic leather deskpad 90x40cm', 45.00, 'HOME-DESK-PAD-07', 3),
+('Magnetic Whiteboard', 'Whiteboard for notes 90x60cm', 69.90, 'HOME-BRD-MAG-08', 3),
+('Stainless Steel Pedal Bin', 'Trash can with removable inner bucket 5L', 55.00, 'HOME-BIN-INOX-09', 3),
+('Ultrasonic Aroma Diffuser', 'Diffuser and air humidifier with LED light', 89.90, 'HOME-DIFF-ULT-10', 3),
+('Black Multipurpose Shelf', 'Industrial style metal storage shelf', 110.00, 'HOME-SHEL-IND-11', 3),
+('Digital Wall Clock', 'Clock with thermometer and calendar features', 64.50, 'HOME-CLOC-DIG-12', 3),
+('Silent Desk Fan', '40cm desk fan with 3 speed settings', 129.90, 'HOME-FAN-DESK-13', 3),
+('Ergonomic Footrest', 'Footrest with adjustable tilt angles', 59.90, 'HOME-FEET-REST-14', 3),
+('Wall-Mounted Folding Table', 'Collapsible desk ideal for small spaces', 145.00, 'HOME-TABL-RET-15', 3),
+('Rolling Drawer Cabinet', 'Steel filing cabinet with 3 drawers and lock', 299.00, 'HOME-DRAW-ST-16', 3),
+('Non-Slip Yoga Mat', 'TPE yoga mat with 6mm thickness', 99.90, 'SPOR-YOGA-MAT-01', 4),
+('Hex Dumbbell Set 5kg', 'Pair of rubber-coated hex dumbbells', 149.90, 'SPOR-DUMB-5KG-02', 4),
+('Speed Jump Rope', 'High-speed ball bearing jump rope for Crossfit', 35.00, 'SPOR-JUMP-ROPE-03', 4),
+('Stainless Steel Thermal Bottle 1L', 'Double-wall vacuum insulated water bottle', 85.00, 'SPOR-BOTL-TH-04', 4),
+('Mini Bands Elastic Set', 'Kit with 5 resistance bands of different levels', 29.90, 'SPOR-BAND-KIT-05', 4),
+('Ab Roller Wheel', 'Dual-wheel abdominal exercise roller with knee mat', 49.90, 'SPOR-AB-WHEEL-06', 4),
+('Hydration Backpack 2L', 'Waterproof backpack with 2L water bladder included', 119.00, 'SPOR-BACK-HYD-07', 4),
+('Bluetooth Heart Rate Monitor', 'Chest strap for accurate heart rate tracking', 179.90, 'SPOR-HEART-MON-08', 4),
+('Gym Workout Gloves', 'Pair of weightlifting gloves with wrist wraps', 39.90, 'SPOR-GLOV-GYM-09', 4),
+('Performance Running Shoes', 'Running shoes with gel cushioning system', 389.00, 'SPOR-SHOE-RUN-10', 4),
+('Mens Dry Fit T-Shirt', 'Lightweight and breathable fabric for training', 45.00, 'SPOR-TSH-DRY-11', 4),
+('Womens Workout Shorts', 'Double-layer running shorts with inner phone pocket', 55.00, 'SPOR-SHO-FEM-12', 4),
+('Upright Exercise Bike', 'Stationary residential bike with digital panel', 899.00, 'SPOR-BIKE-ERG-13', 4),
+('Multifunctional Doorway Pull-Up Bar', 'Adjustable doorway chin-up and pull-up bar', 89.90, 'SPOR-DOOR-BAR-14', 4),
+('Ankle Weights 3kg', 'Pair of ankle weights for leg training', 65.00, 'SPOR-LEG-WGHT-15', 4),
+('Exercise Gym Mat', 'High-density D23 foam workout mat', 42.00, 'SPOR-MAT-GYM-16', 4),
+('Clean Architecture Book', 'A craftsman guide to software structure and design', 125.00, 'BOOK-CL-ARCH-01', 5),
+('Clean Code Book', 'A handbook of agile software craftsmanship', 110.00, 'BOOK-CL-CODE-02', 5),
+('Design Patterns Book', 'Elements of reusable object-oriented software solutions', 165.00, 'BOOK-DES-PATT-03', 5),
+('Refactoring Book', 'Improving the design of existing code', 142.00, 'BOOK-REFACT-04', 5),
+('Domain-Driven Design Book', 'Tackling complexity in the heart of software', 189.00, 'BOOK-DDD-BLUE-05', 5),
+('The Pragmatic Programmer Book', 'From journeyman to master coder', 95.00, 'BOOK-PRAG-PROG-06', 5),
+('Microservices Patterns Book', 'With examples of microservices architecture', 155.00, 'BOOK-MICR-PATT-07', 5),
+('Designing Data-Intensive Applications Book', 'The definitive guide to distributed systems design', 198.00, 'BOOK-DATA-INT-08', 5),
+('Test-Driven Development Book', 'By example - step by step test-guided development', 88.00, 'BOOK-TDD-KENT-09', 5),
+('Effective Java Book', 'Best practices guide for the Java platform', 135.00, 'BOOK-EFF-JAVA-10', 5),
+('Java: How to Program Book', 'A comprehensive introduction to Java programming', 250.00, 'BOOK-JAVA-HOW-11', 5),
+('Weapons of Math Destruction Book', 'How Big Data increases inequality and threatens democracy', 59.90, 'BOOK-ALGO-MATH-12', 5),
+('Site Reliability Engineering Google Book', 'How Google runs production systems', 115.00, 'BOOK-SRE-GOOG-13', 5),
+('Continuous Delivery Book', 'Reliable software releases through build automation', 128.00, 'BOOK-CONT-DELI-14', 5),
+('The Phoenix Project Book', 'A novel about IT, DevOps, and helping your business win', 49.90, 'BOOK-PHOE-PROJ-15', 5),
+('Scrum: The Art of Doing Twice the Work Book', 'Doing twice the work in half the time', 39.90, 'BOOK-SCRUM-HALF-16', 5);
+
+
+-- 3. Populating Inventory (Linking 1:1 to the products created above)
+-- Products generated IDs 1, 2, 3, and 4 respectively
+INSERT INTO inventory (product_id, quantity, warehouse_location) VALUES
+(1, 50, 'Aisle A, Shelf 3'),
+(2, 120, 'Aisle A, Shelf 4'),
+(3, 200, 'Aisle C, Shelf 1'),
+(4, 150, 'Aisle C, Shelf 1'),
+(5, 30, 'Sec Home, Shelf 1'), (6, 85, 'Sec Home, Shelf 1'), (7, 15, 'Sec Home, Aisle B'), (8, 200, 'Sec Home, Drawer 2'),
+(9, 45, 'Sec Home, Shelf 2'), (10, 40, 'Sec Home, Aisle B'), (11, 70, 'Sec Home, Shelf 3'), (12, 110, 'Sec Home, Wall C'),
+(13, 25, 'Sec Home, Aisle C'), (14, 90, 'Sec Home, Drawer 5'), (15, 60, 'Sec Home, Shelf 4'), (16, 55, 'Sec Home, Shelf 4'),
+(17, 18, 'Sec Home, Aisle D'), (18, 35, 'Sec Home, Shelf 5'), (19, 40, 'Sec Home, Shelf 5'), (20, 12, 'Sec Home, Cabinet 1'),
+(21, 150, 'Sec Sport, Aisle A'), (22, 60, 'Sec Sport, Bin 1'), (23, 300, 'Sec Sport, Drawer 1'), (24, 95, 'Sec Sport, Shelf 1'),
+(25, 400, 'Sec Sport, Drawer 2'), (26, 80, 'Sec Sport, Shelf 2'), (27, 35, 'Sec Sport, Backpacks'), (28, 25, 'Sec Sport, Electronics'),
+(29, 120, 'Sec Sport, Drawer 3'), (30, 45, 'Sec Sport, Racks 1'), (31, 250, 'Sec Sport, Racks 2'), (32, 180, 'Sec Sport, Racks 3'),
+(33, 8, 'Sec Sport, Main Stage'), (34, 40, 'Sec Sport, Shelf 3'), (35, 75, 'Sec Sport, Bin 2'), (36, 90, 'Sec Sport, Shelf 4'),
+(37, 45, 'Sec Book, Aisle 1'), (38, 60, 'Sec Book, Aisle 1'), (39, 30, 'Sec Book, Aisle 1'), (40, 25, 'Sec Book, Aisle 1'),
+(41, 15, 'Sec Book, Aisle 2'), (42, 55, 'Sec Book, Aisle 2'), (43, 20, 'Sec Book, Aisle 2'), (44, 42, 'Sec Book, Aisle 2'),
+(45, 80, 'Sec Book, Aisle 3'), (46, 90, 'Sec Book, Aisle 3'), (47, 35, 'Sec Book, Aisle 3'), (48, 110, 'Sec Book, Aisle 4'),
+(49, 40, 'Sec Book, Aisle 4'), (50, 65, 'Sec Book, Aisle 4'), (51, 75, 'Sec Book, Aisle 5'), (52, 130, 'Sec Book, Aisle 5');

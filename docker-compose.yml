@@ -1,0 +1,165 @@
+services:
+  # ==========================================
+  # MESSAGE BROKER: APACHE KAFKA (WITH KRAFT) => Kraft replaces Zookeeper
+  # ==========================================
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0  # test with confluentinc/cp-kafka:latest #7.6.12, 8.2.2
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      # ADICIONADO AQUI: As duas formas que a imagem aceita o ID do cluster para não ter erro
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+      KAFKA_INITIAL_CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+      # Memory Optimization for your laptop
+      KAFKA_JVM_PERFORMANCE_OPTS: "-server -Xms256m -Xmx256m"
+      # For dev environment -  to connect to the single kafka container
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    deploy:
+      resources:
+        limits:
+          memory: 400m
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - sales-network
+
+  # ==========================================
+  # DATABASE
+  # ==========================================
+  mariadb:
+    image: mariadb:12.3 #10.11 # Versão estável com suporte de longo prazo
+    container_name: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=MariaRoot01#
+      - TZ=America/Sao_Paulo   #Logs at Sao Paulo timezone
+    volumes:
+      - ./scripts-db:/docker-entrypoint-initdb.d  # Folder with scripts for first time volume init
+      - mariadb_data:/var/lib/mysql   # persistent volume path
+    networks:
+      - sales-network
+
+  # ==========================================
+  # MICROSERVICE: CATALOG-SERVICE
+  # ==========================================
+  catalog-service:
+    build: ./catalog-service
+    container_name: catalog-service
+    ports:
+      - "8081:8081"
+    environment:
+#      - DATABASE_URL=jdbc:mysql://host-gateway:3306/db_catalog  # maps to the localhost
+      - MARIADB_URL=jdbc:mariadb://mariadb:3306/db_catalog
+      - DB_APP_USER=appCatalogService
+      - DB_APP_USER_PASSWD=tfdtjdnie921%
+      - KAFKA_SERVERS=kafka:29092
+      - TZ=America/Sao_Paulo   #Logs at Sao Paulo timezone
+    extra_hosts: # to work with local DB (connects to localhost)
+      - "host-gateway:host-gateway"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    depends_on:
+        - kafka
+        - mariadb
+    networks:
+      - sales-network
+
+  # ==========================================
+  # MICROSERVICE: PAYMENT-SERVICE
+  # ==========================================
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    ports:
+      - "8083:8083"
+    environment:
+      #- DATABASE_URL=jdbc:mysql://host-gateway:3306/db_payment  # maps to the localhost
+      - MARIADB_URL=jdbc:mariadb://mariadb:3306/db_payment
+      - DB_APP_USER=appPaymentService
+      - DB_APP_USER_PASSWD=tfdtjdnie923%
+      - KAFKA_SERVERS=kafka:29092
+      - TZ=America/Sao_Paulo   #Logs at Sao Paulo timezone
+    extra_hosts: # to work with local DB (connects to localhost)
+      - "host-gateway:host-gateway"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    depends_on:
+      - mariadb
+      - kafka
+    networks:
+      - sales-network
+
+  # ==========================================
+  # MICROSERVICE: ORDER-SERVICE
+  # ==========================================
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "8082:8082"
+    environment:
+      #- DATABASE_URL=jdbc:mysql://host-gateway:3306/db_orders
+      - MARIADB_URL=jdbc:mariadb://mariadb:3306/db_orders
+      - CATALOG_URL=http://catalog-service:8081
+      - DB_APP_USER=appOrderService
+      - DB_APP_USER_PASSWD=tfdtjdnie922%
+      - KAFKA_SERVERS=kafka:29092
+      - TZ=America/Sao_Paulo   #Logs at Sao Paulo timezone
+    extra_hosts:   # to work with local DB (connects to localhost)
+      - "host-gateway:host-gateway"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    depends_on:
+      - mariadb
+      - kafka
+    networks:
+      - sales-network
+
+  # ==========================================
+  # MICROSERVICE: BFF
+  # ==========================================
+  bff-service:
+    build: ./sales-web-bff
+    container_name: bff-service
+    ports:
+      - "8085:8085"
+    environment:
+      - CATALOG_URL=http://catalog-service:8081
+      - ORDER_URL=http://order-service:8082
+      - TZ=America/Sao_Paulo   #Logs at Sao Paulo timezone
+    extra_hosts: # to work with local DB (connects to localhost)
+      - "host-gateway:host-gateway"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    networks:
+      - sales-network
+
+volumes:
+  mariadb_data: # Database volume
+  kafka_data:
+
+# Network isolated for container-to-container communication
+networks:
+  sales-network:
+    driver: bridge
