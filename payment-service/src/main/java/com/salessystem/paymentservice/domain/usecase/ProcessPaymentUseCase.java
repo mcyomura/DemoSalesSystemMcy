@@ -2,7 +2,7 @@ package com.salessystem.paymentservice.domain.usecase;
 
 import com.salessystem.paymentservice.domain.model.PaymentTransaction;
 import com.salessystem.paymentservice.domain.model.PaymentValidatedEventDTO;
-import com.salessystem.paymentservice.domain.model.ServiceConfirmationStatus;
+import com.salessystem.paymentservice.domain.model.PaymentStatus;
 import com.salessystem.paymentservice.ports.inbound.ProcessPaymentPort;
 import com.salessystem.paymentservice.ports.outbound.PaymentEventPublisherPort;
 import com.salessystem.paymentservice.ports.outbound.PaymentRepositoryPort;
@@ -33,9 +33,9 @@ public class ProcessPaymentUseCase implements ProcessPaymentPort {
 
         // MOCK: in the demonstration we are not interfacing with external payment, therefore to simulate a declined
         // payment it's going to be a payment token ending with 99
-        Integer paymentStatus = (paymentToken.endsWith("99"))
-                ? ServiceConfirmationStatus.FAILED
-                : ServiceConfirmationStatus.SUCCESS;
+        PaymentStatus paymentStatus = (paymentToken.endsWith("99"))
+                ? PaymentStatus.FAILED
+                : PaymentStatus.SUCCESS;
 
         PaymentTransaction transaction = new PaymentTransaction();
         transaction.setOrderId(orderId);
@@ -48,7 +48,7 @@ public class ProcessPaymentUseCase implements ProcessPaymentPort {
         PaymentTransaction savedTransaction = paymentRepositoryPort.save(transaction);
 
         String reason;
-        if (transaction.getStatus() == ServiceConfirmationStatus.SUCCESS) {
+        if (transaction.getStatus() == PaymentStatus.SUCCESS) {
             reason = "Payment processed and approved!";
             log.info("Payment approved! Order ID = " + orderId);
         } else {
@@ -58,7 +58,7 @@ public class ProcessPaymentUseCase implements ProcessPaymentPort {
 
         // sends payment process event to order-service
         PaymentValidatedEventDTO event = new PaymentValidatedEventDTO(
-                savedTransaction.getOrderId(), transaction.getStatus(), reason );
+                savedTransaction.getOrderId(), transaction.getStatus().name(), reason );
 
         paymentEventPublisherPort.publish(event, key);
 
@@ -72,9 +72,9 @@ public class ProcessPaymentUseCase implements ProcessPaymentPort {
         if (paymentTransactionOpt.isPresent()) {
             PaymentTransaction transaction = paymentTransactionOpt.get();
 
-            if (transaction.getStatus() == ServiceConfirmationStatus.SUCCESS) {
+            if (transaction.getStatus() == PaymentStatus.SUCCESS) {
 
-                transaction.setStatus(ServiceConfirmationStatus.PAYMENT_REFUNDED);
+                transaction.setStatus(PaymentStatus.REFUNDED);
                 // MOCK: in the demonstration we are not interfacing with external payment, this is the point to
                 // call external payment and command a refund
 
@@ -83,11 +83,11 @@ public class ProcessPaymentUseCase implements ProcessPaymentPort {
 
                 // sends payment refund event to order-service
                 PaymentValidatedEventDTO event = new PaymentValidatedEventDTO(
-                        orderId, transaction.getStatus(), "Payment refunded!" );
+                        orderId, transaction.getStatus().name(), "Payment refunded!" );
 
                 paymentEventPublisherPort.publish(event, key);
 
-            } else if (transaction.getStatus() == ServiceConfirmationStatus.PAYMENT_REFUNDED) {
+            } else if (transaction.getStatus() == PaymentStatus.REFUNDED) {
                 log.error("Payment already refunded! Order ID = " + orderId);
             } else {
                 log.error("Payment at invalid state for refund! Order ID = " + orderId);

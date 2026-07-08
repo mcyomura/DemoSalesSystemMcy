@@ -43,17 +43,16 @@ public class InventoryResponseListener {
         Order order = orderRepositoryGtw.findById(response.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found for ID: " + response.getOrderId()));
 
-        // 2. Update the specific stock validation column with the int value (2 or -1)
-        // Note: Change 'StockStatus' to the exact name of the setter method in your Order class
-        order.setInventoryStatus(response.getServiceStatus());
+        // 2. Update the specific stock validation column
+        order.setInventoryStatus(SagaStatus.valueOf(response.getServiceStatus()));
         log.debug(" -> Stock validation status updated to: " + response.getServiceStatus());
 
-        switch (response.getServiceStatus())
+        switch (order.getInventoryStatus())
         {
-            case ServiceConfirmationStatus.SUCCESS:
+            case SagaStatus.SUCCESS:
                 // 3. If stock is SUCCESS (2) and payment is SUCCESS (2), order becomes CONFIRMED
-                if (order.getInventoryStatus() == ServiceConfirmationStatus.SUCCESS &&
-                        order.getPaymentStatus() == ServiceConfirmationStatus.SUCCESS) {
+                if (order.getInventoryStatus() == SagaStatus.SUCCESS &&
+                        order.getPaymentStatus() == SagaStatus.SUCCESS) {
                     order.setStatus(OrderStatus.APPROVED);
                     log.debug(" ===  Order set to CONFIRMED!");
                 }
@@ -61,7 +60,7 @@ public class InventoryResponseListener {
                 orderRepositoryGtw.save(order);
                 break;
 
-            case ServiceConfirmationStatus.FAILED:
+            case SagaStatus.FAILED:
                 // If the catalog rejected the items, the whole order fails
                 order.setStatus(OrderStatus.CANCELLED);
                 // Save the updated order state back to the database
@@ -77,7 +76,7 @@ public class InventoryResponseListener {
                 log.debug(" !!! Order CANCELED due to lack of stock. Reason: " + response.getReason());
                 log.debug(" === [Saga Orchestrator] Compensation event sent to topic: order-canceled ===");
                 break;
-            case ServiceConfirmationStatus.ROLLBACK:
+            case SagaStatus.RETURNED:
                 // Save the updated inventory status to the database
                 orderRepositoryGtw.save(order);
                 break;

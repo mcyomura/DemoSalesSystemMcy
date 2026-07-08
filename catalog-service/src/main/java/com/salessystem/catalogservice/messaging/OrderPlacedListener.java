@@ -57,7 +57,7 @@ public class OrderPlacedListener {
             // 2. Creates stock updated payload
             InventoryValidatedEventDTO response = new InventoryValidatedEventDTO(
                     event.getOrderId(),
-                    ServiceConfirmationStatus.SUCCESS, // Using Enum
+                    StockResult.SUCCESS.name(), // Using Enum
                     "Stock successfully allocated."
             );
 
@@ -68,7 +68,7 @@ public class OrderPlacedListener {
         } catch (Exception e) {
             InventoryValidatedEventDTO response = new InventoryValidatedEventDTO(
                     event.getOrderId(),
-                    ServiceConfirmationStatus.FAILED, // Using Enum
+                    StockResult.FAILED.name(), // Using Enum
                     e.getMessage());
             // Sends the stock updated failed event
             kafkaTemplate.send(inventoryValidatedTopic, key, response);
@@ -85,7 +85,7 @@ public class OrderPlacedListener {
 
             InventoryValidatedEventDTO response = new InventoryValidatedEventDTO(
                     event.getOrderId(),
-                    ServiceConfirmationStatus.RETURNED_STOCK, // Using Enum
+                    StockResult.RETURNED.name(), // Using Enum
                     "Items returned to stock."
             );
 

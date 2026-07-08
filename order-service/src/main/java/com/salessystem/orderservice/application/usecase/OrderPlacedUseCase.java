@@ -5,9 +5,8 @@ import com.salessystem.orderservice.application.exception.ResourceNotFoundExcept
 import com.salessystem.orderservice.application.gateway.OrderGateway;
 import com.salessystem.orderservice.application.gateway.OrderMessageGateway;
 import com.salessystem.orderservice.domain.Order;
-import com.salessystem.orderservice.domain.OrderEventType;
 import com.salessystem.orderservice.domain.OrderStatus;
-import com.salessystem.orderservice.domain.ServiceConfirmationStatus;
+import com.salessystem.orderservice.domain.SagaStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,15 +31,15 @@ public class OrderPlacedUseCase {
         }
         order = orderOpt.get();
 
-        if (order.getStatus().getCode() != OrderStatus.DRAFT.getCode()){
+        if (order.getStatus() != OrderStatus.DRAFT){
             throw new IllegalOrderStateException("Shopping cart already closed. UUID:" + uuid);
         }
 
         // 2. Change status of cart, plus stock and payment confirmation statuses to PENDING
         order.setCustomerId(customerId);
         order.setStatus(OrderStatus.PENDING);
-        order.setInventoryStatus(ServiceConfirmationStatus.PENDING);
-        order.setPaymentStatus(ServiceConfirmationStatus.PENDING);
+        order.setInventoryStatus(SagaStatus.PENDING);
+        order.setPaymentStatus(SagaStatus.PENDING);
 
         // 3. Save the order with statuses updated
         Order savedOrder =orderGateway.save(order);

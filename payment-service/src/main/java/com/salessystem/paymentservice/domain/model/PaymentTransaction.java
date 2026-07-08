@@ -9,7 +9,7 @@ public class PaymentTransaction {
     private Integer customerId;
     private BigDecimal totalAmount;
     private String paymentToken;
-    private Integer status;
+    private PaymentStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -19,7 +19,7 @@ public class PaymentTransaction {
 
     // Full constructor
     public PaymentTransaction(Integer id, Integer orderId, Integer customerId, BigDecimal totalAmount,
-                              String paymentToken, Integer status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                              String paymentToken, PaymentStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.orderId = orderId;
         this.customerId = customerId;
@@ -46,8 +46,8 @@ public class PaymentTransaction {
     public String getPaymentToken() { return paymentToken; }
     public void setPaymentToken(String paymentToken) { this.paymentToken = paymentToken; }
 
-    public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
+    public PaymentStatus getStatus() { return status; }
+    public void setStatus(PaymentStatus status) { this.status = status; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

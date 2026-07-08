@@ -3,10 +3,7 @@ package com.salessystem.orderservice.application.usecase;
 import com.salessystem.orderservice.application.exception.IllegalOrderStateException;
 import com.salessystem.orderservice.application.exception.ResourceNotFoundException;
 import com.salessystem.orderservice.application.gateway.OrderGateway;
-import com.salessystem.orderservice.domain.ManageCartResult;
-import com.salessystem.orderservice.domain.Order;
-import com.salessystem.orderservice.domain.OrderItem;
-import com.salessystem.orderservice.domain.OrderStatus;
+import com.salessystem.orderservice.domain.*;
 import com.salessystem.orderservice.infra.web.client.CatalogClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -42,6 +39,8 @@ public class ManageCartUseCase {
 
         order.setUuid(UUID.randomUUID().toString());
         order.setStatus(OrderStatus.DRAFT);
+        order.setInventoryStatus(SagaStatus.DRAFT);
+        order.setPaymentStatus(SagaStatus.DRAFT);
         order.setTotalAmount(BigDecimal.ZERO);
         order.setPriceUpdatedAt(LocalDateTime.now());
 
@@ -94,7 +93,7 @@ public class ManageCartUseCase {
                 throw new ResourceNotFoundException("UUID not found:" + cartUuid);
             }
             order = orderOpt.get();
-            if (order.getStatus().getCode() != OrderStatus.DRAFT.getCode()){
+            if (order.getStatus() != OrderStatus.DRAFT){
                 throw new IllegalOrderStateException("Shopping cart already closed. UUID:" + cartUuid);
             }
 

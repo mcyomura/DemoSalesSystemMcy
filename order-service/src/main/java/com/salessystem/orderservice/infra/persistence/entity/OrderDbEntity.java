@@ -1,5 +1,7 @@
 package com.salessystem.orderservice.infra.persistence.entity;
 
+import com.salessystem.orderservice.domain.OrderStatus;
+import com.salessystem.orderservice.domain.SagaStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,10 +10,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.Version;
 
 @Entity
 @Table(name = "orders")
 public class OrderDbEntity {
+    @Version
+    private Long version;   // JPA controls this field, with this we control the concurrency between stock and payment status update
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +29,19 @@ public class OrderDbEntity {
     private String uuid;
 
     @Column(nullable = false)
-    private Integer status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
     @Column(name = "inventory_status")
-    private Integer inventoryStatus;
+    @Enumerated(EnumType.STRING)
+    private SagaStatus inventoryStatus;
 
     @Column(name = "payment_status")
-    private Integer paymentStatus;
+    @Enumerated(EnumType.STRING)
+    private SagaStatus paymentStatus;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -57,6 +65,9 @@ public class OrderDbEntity {
 
     public OrderDbEntity() {}
 
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -66,17 +77,17 @@ public class OrderDbEntity {
     public String getUuid() { return uuid; }
     public void setUuid(String uuid) { this.uuid = uuid; }
 
-    public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
 
     public BigDecimal getTotalAmount() { return totalAmount; }
     public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
 
-    public Integer getInventoryStatus() { return inventoryStatus;   }
-    public void setInventoryStatus(Integer inventoryStatus) {   this.inventoryStatus = inventoryStatus;  }
+    public SagaStatus getInventoryStatus() { return inventoryStatus;   }
+    public void setInventoryStatus(SagaStatus inventoryStatus) {   this.inventoryStatus = inventoryStatus;  }
 
-    public Integer getPaymentStatus() { return paymentStatus;}
-    public void setPaymentStatus(Integer paymentStatus) { this.paymentStatus = paymentStatus; }
+    public SagaStatus getPaymentStatus() { return paymentStatus;}
+    public void setPaymentStatus(SagaStatus paymentStatus) { this.paymentStatus = paymentStatus; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 

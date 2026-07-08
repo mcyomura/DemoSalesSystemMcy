@@ -8,12 +8,13 @@ import java.util.List;
 public class Order {
 
     private Integer id;
+    private Long version;
     private Integer customerId;
     private String uuid;
     private OrderStatus status;
     private BigDecimal totalAmount;
-    private Integer inventoryStatus;
-    private Integer paymentStatus;
+    private SagaStatus inventoryStatus;
+    private SagaStatus paymentStatus;
     private LocalDateTime priceUpdatedAt;
     private LocalDateTime updatedAt;
     private List<OrderItem> items = new ArrayList<>();
@@ -22,6 +23,9 @@ public class Order {
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
+
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version;   }
 
     public Integer getCustomerId() { return customerId; }
     public void setCustomerId(Integer customerId) { this.customerId = customerId; }
@@ -35,11 +39,11 @@ public class Order {
     public BigDecimal getTotalAmount() { return totalAmount; }
     public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
 
-    public Integer getInventoryStatus() { return inventoryStatus;  }
-    public void setInventoryStatus(Integer inventoryStatus) { this.inventoryStatus = inventoryStatus;  }
+    public SagaStatus getInventoryStatus() { return inventoryStatus;  }
+    public void setInventoryStatus(SagaStatus inventoryStatus) { this.inventoryStatus = inventoryStatus;  }
 
-    public Integer getPaymentStatus() { return paymentStatus; }
-    public void setPaymentStatus(Integer paymentStatus) { this.paymentStatus = paymentStatus;  }
+    public SagaStatus getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(SagaStatus paymentStatus) { this.paymentStatus = paymentStatus;  }
 
     public LocalDateTime getPriceUpdatedAt() { return priceUpdatedAt; }
     public void setPriceUpdatedAt(LocalDateTime priceUpdatedAt) { this.priceUpdatedAt = priceUpdatedAt; }

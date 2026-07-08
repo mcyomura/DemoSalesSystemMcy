@@ -17,12 +17,13 @@ DROP TABLE IF EXISTS orders;
 -- 1. Sales Order Header Table
 CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    version BIGINT DEFAULT 0 NOT NULL,
     customer_id INT,
     uuid VARCHAR(50) UNIQUE NOT NULL,
-    status INT NOT NULL,
+    status VARCHAR(20) NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL,
-    inventory_status INT,
-    payment_status INT,
+    inventory_status VARCHAR(20),
+    payment_status VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     price_updated_at DATETIME NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

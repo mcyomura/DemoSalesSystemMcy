@@ -13,14 +13,12 @@ import org.mapstruct.Named;
 public interface OrderMapper {
 
     // 1. convertion DB to domain
-    @Mapping(target = "status", source = "status", qualifiedByName = "mapCodeToEnum")
     Order toDomainOrder (OrderDbEntity orderDb);
 
     @Mapping(target = "order", ignore = true)
     OrderItem toDomainOrderItem(OrderItemDbEntity orderItemDb);
 
     // 2. convertion domain to DB
-    @Mapping(target = "status", source = "status", qualifiedByName = "mapEnumToCode")
     @Mapping(target = "createdAt", ignore = true)   //ignore field created_at, exists only for DB entity
     OrderDbEntity toEntityOrder(Order order);
 
@@ -28,17 +26,5 @@ public interface OrderMapper {
     @Mapping(target = "order", ignore = true)   // order will enter as the OrderDbEntity.setItems
     OrderItemDbEntity toEntityOrderItem (OrderItem orderItem);
 
-    @Named("mapEnumToCode")
-    default int mapEnumToCode(OrderStatus status) {
-        if (status == null) {
-            return 0; // default value (DRAFT)
-        }
-        return status.getCode();
-    }
-
-    @Named("mapCodeToEnum")
-    default OrderStatus mapCodeToEnum(int code) {
-        return OrderStatus.fromCode(code);
-    }
 
 }

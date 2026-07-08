@@ -1,5 +1,6 @@
 package com.salessystem.paymentservice.adapters.outbound.persistence;
 
+import com.salessystem.paymentservice.domain.model.PaymentStatus;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,7 +26,8 @@ public class PaymentEntity {
     private String paymentToken;
 
     @Column(name = "status", nullable = false)
-    private Integer status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -52,8 +54,8 @@ public class PaymentEntity {
     public String getPaymentToken() { return paymentToken; }
     public void setPaymentToken(String paymentToken) { this.paymentToken = paymentToken; }
 
-    public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
+    public PaymentStatus getStatus() { return status; }
+    public void setStatus(PaymentStatus status) { this.status = status; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

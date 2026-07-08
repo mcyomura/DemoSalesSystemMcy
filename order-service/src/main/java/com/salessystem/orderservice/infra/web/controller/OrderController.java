@@ -56,8 +56,8 @@ public class OrderController {
                 orderPlacedRequestDTO.getBearerToken());
 
         OrderStatusResponseDTO response = new OrderStatusResponseDTO (orderUpdated.getId(), orderUpdated.getCustomerId(),
-                orderUpdated.getStatus().name(), orderUpdated.getInventoryStatus(), orderUpdated.getPaymentStatus(),
-                orderUpdated.getTotalAmount());
+                orderUpdated.getStatus().name(), orderUpdated.getInventoryStatus().name(),
+                orderUpdated.getPaymentStatus().name(), orderUpdated.getTotalAmount());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -68,7 +68,8 @@ public class OrderController {
         Order order = consultOrder.execute(id);
 
         OrderStatusResponseDTO response = new OrderStatusResponseDTO (order.getId(), order.getCustomerId(),
-                order.getStatus().name(), order.getInventoryStatus(), order.getPaymentStatus(), order.getTotalAmount());
+                order.getStatus().name(), order.getInventoryStatus().name(), order.getPaymentStatus().name(),
+                order.getTotalAmount());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

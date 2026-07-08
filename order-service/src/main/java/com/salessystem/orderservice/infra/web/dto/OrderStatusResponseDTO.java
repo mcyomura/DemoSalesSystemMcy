@@ -6,15 +6,15 @@ public class OrderStatusResponseDTO {
     private Integer id;
     private Integer customerId;
     private String status;
-    private Integer inventory_status;
-    private Integer payment_status;
+    private String inventory_status;
+    private String payment_status;
     private BigDecimal totalAmount;
 
     public OrderStatusResponseDTO() {
     }
 
-    public OrderStatusResponseDTO(Integer id, Integer customerId, String status, Integer inventory_status,
-                                  Integer payment_status, BigDecimal totalAmount) {
+    public OrderStatusResponseDTO(Integer id, Integer customerId, String status, String inventory_status,
+                                  String payment_status, BigDecimal totalAmount) {
         this.id = id;
         this.customerId = customerId;
         this.status = status;
@@ -32,11 +32,11 @@ public class OrderStatusResponseDTO {
     public String getStatus() {  return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public int getInventory_status() {  return inventory_status; }
-    public void setInventory_status(int inventory_status) { this.inventory_status = inventory_status;  }
+    public String getInventory_status() {  return inventory_status; }
+    public void setInventory_status(String inventory_status) { this.inventory_status = inventory_status;  }
 
-    public int getPayment_status() {  return payment_status;  }
-    public void setPayment_status(int payment_status) {  this.payment_status = payment_status;  }
+    public String getPayment_status() {  return payment_status;  }
+    public void setPayment_status(String payment_status) {  this.payment_status = payment_status;  }
 
     public BigDecimal getTotalAmount() {  return totalAmount;  }
     public void setTotalAmount(BigDecimal totalAmount) {  this.totalAmount = totalAmount; }

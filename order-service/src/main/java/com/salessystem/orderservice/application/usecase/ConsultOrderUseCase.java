@@ -2,7 +2,6 @@ package com.salessystem.orderservice.application.usecase;
 
 import com.salessystem.orderservice.application.exception.ResourceNotFoundException;
 import com.salessystem.orderservice.application.gateway.OrderGateway;
-import com.salessystem.orderservice.application.gateway.OrderMessageGateway;
 import com.salessystem.orderservice.domain.Order;
 import org.springframework.stereotype.Service;
 

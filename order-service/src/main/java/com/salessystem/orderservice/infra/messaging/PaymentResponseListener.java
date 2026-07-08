@@ -43,38 +43,45 @@ public class PaymentResponseListener {
         Order order = orderRepositoryGtw.findById(response.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found for ID: " + response.getOrderId()));
 
-        // 2. Update the specific payment validation column with the status
-        order.setPaymentStatus(response.getServiceStatus());
+        // 2. Update the specific stock validation column
+        order.setPaymentStatus(SagaStatus.valueOf(response.getServiceStatus()));
         log.debug(" -> Payment validation status updated to: " + response.getServiceStatus());
 
-        // 3. If stock is SUCCESS (2) and payment is SUCCESS (2), order becomes CONFIRMED
-        if (order.getInventoryStatus() == ServiceConfirmationStatus.SUCCESS &&
-                order.getPaymentStatus() == ServiceConfirmationStatus.SUCCESS) {
+        switch (order.getPaymentStatus())
+        {
+            case SagaStatus.SUCCESS:
+                // 3. If stock is SUCCESS (2) and payment is SUCCESS (2), order becomes CONFIRMED
+                if (order.getInventoryStatus() == SagaStatus.SUCCESS &&
+                        order.getPaymentStatus() == SagaStatus.SUCCESS) {
+                    order.setStatus(OrderStatus.APPROVED);
+                    log.debug(" ===  Order set to CONFIRMED!");
+                }
 
-            order.setStatus(OrderStatus.APPROVED);
-            // 4. Save the updated order state back to the database
-            orderRepositoryGtw.save(order);
+                orderRepositoryGtw.save(order);
+                break;
 
-            log.info(" ===  Order set to CONFIRMED! Order ID: {}", order.getId());
-        } else if (response.getServiceStatus() == ServiceConfirmationStatus.FAILED) {
-            // If the payment rejected the items, the whole order fails
-            order.setStatus(OrderStatus.CANCELLED);
-            // Save the updated order state back to the database
-            orderRepositoryGtw.save(order);
+            case SagaStatus.FAILED:
+                // If the catalog rejected the items, the whole order fails
+                order.setStatus(OrderStatus.CANCELLED);
+                // Save the updated order state back to the database
+                orderRepositoryGtw.save(order);
 
-            // Create the compensation event
-            OrderEventDTO orderEventDto = orderEventMapper.toEventDto(order);
-            orderEventDto.setOrderEventType(OrderEventType.PAYMENT_DECLINED);
+                // Create the compensation event
+                OrderEventDTO orderEventDto = orderEventMapper.toEventDto(order);
+                orderEventDto.setOrderEventType(OrderEventType.PAYMENT_DECLINED);
 
-            // 3. Publish to the order-event topic using UUID as key (will for sure process AFTER the order placed event)
-            kafkaTemplate.send(topicOrderEvent, order.getUuid(), orderEventDto);
+                // 3. Publish to the order-event topic using UUID as key (will for sure process AFTER the order placed event)
+                kafkaTemplate.send(topicOrderEvent, order.getUuid(), orderEventDto);
 
-           log.info(" !!! Order CANCELED due to payment failure. Reason: " + response.getReason());
-           log.debug(" === [Saga Orchestrator] Compensation event sent to topic: order-canceled ===");
-        } else {
-            // only saves the payment status - REFUND
-            orderRepositoryGtw.save(order);
+                log.debug(" !!! Order CANCELED due to payment declined. Reason: " + response.getReason());
+                log.debug(" === [Saga Orchestrator] Compensation event sent to topic: order-canceled ===");
+                break;
+            case SagaStatus.REFUNDED:
+                // Save the updated inventory status to the database
+                orderRepositoryGtw.save(order);
+                break;
+            default:
+                log.error("Invalid status from Payment service");
         }
-
     }
 }
