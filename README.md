@@ -55,12 +55,13 @@ In the demo there's not much diff between them:
 # Running the demo
 ## Instructions to run
 * Download the zip
-* I would build one container at a time:
+* I would build one service at a time:
 	* docker compose build bff-service
 	* docker compose build order-service
 	* docker compose build catalog-service
 	* docker compose build payment-service
-* Run the containers: docker compose up
+* Run the containers: docker compose up -d
+* Wait some minutes for the services go up
 * Use postman to send the requests (see examples below)
 
 ## Postman examples (usage)
