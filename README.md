@@ -232,7 +232,7 @@ Post:
 ```json
 {
    "uuid":  "e02107ef-61d0-41db-a402-406a9375c345",
-   "customerId": "827329",
+   "customerId": "82732917",
    "paymentToken": "fioej2",
    "bearerToken": "fjioejf"
 }
@@ -241,9 +241,11 @@ Response:
 ```json
 {
     "id": 1,
-    "customerId": 827329,
+    "customerId": 82732917,
     "status": "PENDING",
-    "totalAmount": 209.88
+    "inventory_status": "PENDING",
+    "payment_status": "PENDING",
+    "totalAmount": 59.80
 }
 ```
 
@@ -254,11 +256,11 @@ URL: http://localhost:8085/api/v1/salesbff/cart/2
 Response:   
 ```json
 {
-    "id": 2,
-    "customerId": 8273291,
+    "id": 1,
+    "customerId": 82732917,
     "status": "APPROVED",
-    "inventory_status": 2,
-    "payment_status": 2,
-    "totalAmount": 120.90
+    "inventory_status": "SUCCESS",
+    "payment_status": "SUCCESS",
+    "totalAmount": 59.80
 }
 ```
