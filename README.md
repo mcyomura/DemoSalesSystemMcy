@@ -11,7 +11,7 @@ It is a Sales System (backend) consisting of 5 microservices + 2 infrastructure 
 A high level (context) diagram showing main Sales System and external integrations.
 
 ![C4 Level 1](Documentation/C4_Sales_System-C4-L1.drawio.png)
-## C4 - Level 1
+## C4 - Level 2
 Shows the microservices, databases, messaging topics. In blue the scope of the demo.
 
 ![C4 Level 2](Documentation/C4_Sales_System-C4-L2.drawio.png)
@@ -23,9 +23,9 @@ For the demo I cared to use **different code design patterns**, so I have micros
 * Sequence diagram: [Sequence diagram](Documentation/C4_Sales_System-Sequence_diagram.drawio.png) shows the interaction between the components.
 * Entity relationship diagrams: [db-orders](Documentation/C4_Sales_System-db-orders.drawio.png), [db-catalog](Documentation/C4_Sales_System-db-catalog.drawio.png), [db-payment](Documentation/C4_Sales_System-db-payment.drawio.png). In case you wish to connect the database via DBeaver or other. 
 * The swaggers (only BFF will be externally exposed, but I provide internal swaggers as well):
-	* [bff](Documentation/swagger_bff.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_bff.json?token=GHSAT0AAAAAAECAAVB7W7Z27OQNAERJ2CPQ2SNKVJA)  
- 	* [order](Documentation/swagger_order-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_order-service.json?token=GHSAT0AAAAAAECAAVB6MZDP62N56ZR2ZUOO2SNKZAA)  
-  	* [catalog](Documentation/swagger_catalog-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_catalog-service.json?token=GHSAT0AAAAAAECAAVB7NXOZFLPKCF7YFFGK2SNK2BA)  
+	* [bff](Documentation/swagger_bff.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_bff.json)  
+ 	* [order](Documentation/swagger_order-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://github.com/mcyomura/DemoSalesSystemMcy/blob/master/Documentation/swagger_order-service.json)  
+  	* [catalog](Documentation/swagger_catalog-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://github.com/mcyomura/DemoSalesSystemMcy/blob/master/Documentation/swagger_catalog-service.json)  
 
 ## Microservices:
 * **sales-web-bff (8085):** the only microservice exposing its endpoints through an API Manager.
