@@ -29,8 +29,8 @@ public class OrderEventListener {
         log.info(" -> Order ID: {} | Event Type: {}", payload.getOrderId(), payload.getOrderEventType());
 
         if (payload.getOrderEventType() == null) {
-            log.error(" -> Error: EventType is missing from payload! Cannot route message.");
-         return;
+            log.error(" -> Error: EventType is invalid in payload! Cannot route message.");
+            throw new IllegalArgumentException("Invalid event type, check .DLT");
         }
 
         // Routing to the Domain Use Case through the Inbound Port
@@ -62,9 +62,6 @@ public class OrderEventListener {
                 log.info("Payment declined event received from order-service, no action here, already processed - Order ID: {}", payload.getOrderId());
                 break;
 
-            default:
-                log.warn(" -> Warning: Unknown Event Type received: {}", payload.getOrderEventType());
-                break;
         }
     }
 }
