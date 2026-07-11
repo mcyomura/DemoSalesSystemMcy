@@ -90,15 +90,12 @@ public class ProcessPaymentUseCase implements ProcessPaymentPort {
             } else if (transaction.getStatus() == PaymentStatus.REFUNDED) {
                 log.error("Payment already refunded! Order ID = " + orderId);
             } else {
-                log.error("Payment at invalid state for refund! Order ID = " + orderId);
+                log.debug("Payment at invalid state for refund! Order ID = " + orderId);
             }
 
         } else {
             // if payment is not found then throws an error to be investigated. Order is kept pending
-            log.error("Payment not found while trying to process a refund! Order ID = " + orderId);
+            log.error("Payment not found while trying to process a refund! Order ID = {}, Key = {}", orderId, key);
         }
-
-
-
     }
 }

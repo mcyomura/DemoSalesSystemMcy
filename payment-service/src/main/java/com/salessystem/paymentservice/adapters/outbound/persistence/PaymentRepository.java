@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
     // Spring Data automatically generates the query based on method name
     Optional<PaymentEntity> findByOrderId(Integer orderId);
+    // Used during the tests
+    long countByOrderId(Integer orderId);
 }

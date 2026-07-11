@@ -2,7 +2,7 @@ package com.salessystem.paymentservice.domain.model;
 
 public class PaymentValidatedEventDTO {
     private Integer orderId;
-    private String serviceStatus; // SUCCESS or REJECTED
+    private String serviceStatus;
     private String reason; // Optional error description
 
     // Default constructor for Jackson serialization
