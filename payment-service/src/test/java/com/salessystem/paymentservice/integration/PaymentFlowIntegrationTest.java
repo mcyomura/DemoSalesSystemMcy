@@ -213,6 +213,7 @@ class PaymentFlowIntegrationTest extends BaseIntegrationTest {
         long recordCount = paymentRepository.countByOrderId(123);
         assertThat(recordCount).isEqualTo(0L);
 
+        // Consume the topic in order not to affect following tests
         try {
             KafkaTestUtils.getSingleRecord(testConsumer, orderEventTopic, Duration.ofSeconds(5));
         } catch (Exception e) {

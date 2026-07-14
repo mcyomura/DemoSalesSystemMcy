@@ -33,6 +33,10 @@ public class KafkaErrorConfig {
 
         // Optional: You can specify list of exceptions that should NOT be retried (e.g., NullPointerException)
         errorHandler.addNotRetryableExceptions(NullPointerException.class);
+        errorHandler.addNotRetryableExceptions(org.springframework.kafka.support.serializer.DeserializationException.class);
+        errorHandler.addNotRetryableExceptions(org.apache.kafka.common.errors.SerializationException.class);
+        errorHandler.addNotRetryableExceptions(com.fasterxml.jackson.core.JsonParseException.class);
+        errorHandler.addNotRetryableExceptions(org.springframework.kafka.listener.ListenerExecutionFailedException.class);
 
         errorHandler.setRetryListeners((record, ex, deliveryAttempt) -> {
             log.error("!!! [Kafka Error Monitor] Processing failed on topic: {} | Partition: {} | Offset: {}",
