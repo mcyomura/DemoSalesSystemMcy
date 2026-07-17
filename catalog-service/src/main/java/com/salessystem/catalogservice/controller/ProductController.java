@@ -43,13 +43,4 @@ public class ProductController {
 
         return ResponseEntity.ok(productDTO);
     }
-
-    @GetMapping("/sku/{sku}")
-    public ResponseEntity<ProductDTO> getProductBySku(@PathVariable String sku){
-        Product product = productService.getProductBySku(sku);
-
-        ProductDTO productDTO = productMapper.toDTO(product);
-
-        return ResponseEntity.ok(productDTO);
-    }
 }

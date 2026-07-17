@@ -28,10 +28,4 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with id:"+ id));
     }
-
-    @Transactional(readOnly = true)
-    public Product getProductBySku (String sku) {
-        return productRepository.findBySku(sku)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found with SKU:"+ sku));
-    }
 }

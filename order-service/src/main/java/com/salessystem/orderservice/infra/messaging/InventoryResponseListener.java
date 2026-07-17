@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 @Component
 public class InventoryResponseListener {
-    private static final Logger log = LoggerFactory.getLogger(PaymentResponseListener.class);
+    private static final Logger log = LoggerFactory.getLogger(InventoryResponseListener.class);
 
     private final OrderRepositoryGateway orderRepositoryGtw;
     private final KafkaTemplate<String, Object> kafkaTemplate;

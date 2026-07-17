@@ -3,8 +3,9 @@ package com.salessystem.orderservice.application.usecase;
 import com.salessystem.orderservice.application.exception.IllegalOrderStateException;
 import com.salessystem.orderservice.application.exception.ResourceNotFoundException;
 import com.salessystem.orderservice.application.gateway.OrderGateway;
+import com.salessystem.orderservice.application.gateway.ProductGateway;
 import com.salessystem.orderservice.domain.*;
-import com.salessystem.orderservice.infra.web.client.CatalogClient;
+//import com.salessystem.orderservice.infra.web.client.CatalogClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,14 +23,15 @@ import java.util.UUID;
 public class ManageCartUseCase {
 
     private final OrderGateway orderGateway;
-    private final CatalogClient catalogClient;
+    //private final CatalogClient catalogClient;
+    private final ProductGateway productGateway;
     private final long cartRefreshMinutes; // Maximum minutes allowed before prices in a cart are refreshed
 
     // Constructor injection for the repository gateway interface
-    public ManageCartUseCase(OrderGateway orderGateway, CatalogClient catalogClient,
+    public ManageCartUseCase(OrderGateway orderGateway, ProductGateway productGateway,
                              @Value("${cart.refresh.minutes}") long cartRefreshMinutes) {
         this.orderGateway = orderGateway;
-        this.catalogClient = catalogClient;
+        this.productGateway = productGateway;
         this.cartRefreshMinutes = cartRefreshMinutes;
     }
 
@@ -66,13 +68,13 @@ public class ManageCartUseCase {
         // Validates every item against the catalog-service
         for (OrderItem item : order.getItems()) {
             // 1. collateral call
-            CatalogClient.ProductResponse product = catalogClient.getProductById(item.getProductId());
+            Product product = productGateway.getProductById(item.getProductId());
 
             // 2. Updates the staled price
-            item.setPriceAtPurchase(product.getPrice());
+            item.setPriceAtPurchase(product.price());
 
             // 3. Calculates total amount
-            BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+            BigDecimal itemTotal = product.price().multiply(BigDecimal.valueOf(item.getQuantity()));
             totalOrderAmount = totalOrderAmount.add(itemTotal);
 
             order.setTotalAmount(totalOrderAmount);
@@ -111,12 +113,12 @@ public class ManageCartUseCase {
         }
 
         // Retrieves price for the new item
-        CatalogClient.ProductResponse product = catalogClient.getProductById(productId);
+        Product product = productGateway.getProductById(productId);
         // add the new item
-        order.addItem(productId, quantity, product.getPrice());
+        order.addItem(productId, quantity, product.price());
 
         // updates total amount
-        BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        BigDecimal itemTotal = product.price().multiply(BigDecimal.valueOf(quantity));
         BigDecimal totalAmount = order.getTotalAmount().add(itemTotal);
         order.setTotalAmount(totalAmount);
 
