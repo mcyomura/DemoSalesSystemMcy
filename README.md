@@ -38,6 +38,16 @@ For the demo I cared to use **different code design patterns**, so I have micros
 * **kafka:** version running using kraft
 * **MariaDB:** I started the local project with MySql, but migrated to MariaDB (lighter) in containers. Note that although I have instantiated a single container, the schemas are totally independent. For that I used different application users, so the catalog database has the users root and appCatalogService, and the catalog microservice is configured to connect using the appCatalogService user only.
 
+## SAGA choreography:
+Upon a cart checkout:
+* **Order-service sends** an **ORDER-PLACED event** (order_events topic)
+* **Catalog-service process ORDER-PLACED event** and deduct stock itens. It then sends a **SUCCESS event** in the inventory_processed topic or a **FAILED event** if any product had not enough stock.
+* **Payment-service**, at the same time, **process ORDER-PLACED event** and "process" the payment. It then sends a **SUCCESS event** in the payment_processed topic or a **FAILED event** if payment was rejected.
+* **Order-service receive back both events** from inventory_processed and payment_processed. If **both were SUCCESS**, it then changes the **order status to APPROVED**. If payment/inventory sent a FAILED, then the order status goes to **CANCELED** and an **STOCK_DECLINED/PAYMENT_DECLINED event** or both is sent. Note: we used an @Version, so that if both events are processed at the same time, and both READ the database before commiting the status change, what will happen is that the first will commit, the second will fail throwing an exception, then kafkaErrorConfig will capture the exception and do not commit the message, that will go to the next attempt and will finally be successfully processed.
+* If a **STOCK_DECLINED event** were sent, then payment-service will process a **refund** and send back a **REFUNDED** event to update order-service record.
+* If a **PAYMENT_DECLINED event** were sent, then catalog-service will process the **stock return** and send back a **RETURNED** event to update order-service record.
+* **Notes about the SAGA**: I already mentioned at paragraph 4 (just here above) about the @Version. Another SAGA detail is that to avoid a canceled operation to be processed before an order-placed operation, we use the order_events topic and use the **UUID as the key**, this guarantees that the first event (order-placed) will be processed BEFORE any cancelation event for the same order.
+
 ## Usage of AI
 I'm totally pro for the AI usage, nevertheless, as my goal here was to put in practice many concepts, I restrained the usage for solving doubts, exchange ideas, and guide some steps. In the next steps I have an AI course for developers already purchased, the prerequisite for the course is that you master coding yourself.
 
@@ -50,7 +60,6 @@ In the demo there's not much diff between them:
 
 ## Next Steps
 * Implement auth-customer-service
-* Automation tests (I know, I should've already done this, but I haven't, that would have helped me, let's go for it!)
 
 # Running the demo
 ## Instructions to run
