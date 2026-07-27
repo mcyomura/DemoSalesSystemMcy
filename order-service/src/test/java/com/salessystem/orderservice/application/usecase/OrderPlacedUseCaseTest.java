@@ -58,7 +58,7 @@ class OrderPlacedUseCaseTest {
         when(orderGateway.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        Order result = orderPlacedUseCase.execute(cartUuid, customerId, payToken, bearerToken);
+        Order result = orderPlacedUseCase.execute(cartUuid, customerId, payToken);
 
         // Assert
         assertThat(result).isNotNull();
@@ -86,7 +86,7 @@ class OrderPlacedUseCaseTest {
 
         // Act & Assert
         assertThatThrownBy(() ->
-                orderPlacedUseCase.execute(nonExistentUuid, 456, "pay-token", "bearer-token")
+                orderPlacedUseCase.execute(nonExistentUuid, 456, "pay-token")
         )
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("UUID invalid:" + nonExistentUuid);
@@ -111,7 +111,7 @@ class OrderPlacedUseCaseTest {
 
         // Act & Assert
         assertThatThrownBy(() ->
-                orderPlacedUseCase.execute(cartUuid, 456, "pay-token", "bearer-token")
+                orderPlacedUseCase.execute(cartUuid, 456, "pay-token")
         )
                 .isInstanceOf(IllegalOrderStateException.class)
                 .hasMessageContaining("Shopping cart already closed. UUID:" + cartUuid);

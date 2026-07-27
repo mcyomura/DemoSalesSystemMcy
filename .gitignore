@@ -1,0 +1,4 @@
+# Local environment variables
+customer-auth-service/local.env
+order-service/local.env
+.env

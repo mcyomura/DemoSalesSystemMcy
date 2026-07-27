@@ -4,15 +4,15 @@ public class OrderPlacedRequestDTO {
     private String uuid;     // Can be null on the first item addition
     private Integer customerId;  // Can be null while the user is navigating anonymously
     private String paymentToken;
-    private String bearerToken;
+    //private String bearerToken;
 
     public OrderPlacedRequestDTO() {}
 
-    public OrderPlacedRequestDTO(String uuid, Integer customerId, String paymentToken, String bearerToken) {
+    public OrderPlacedRequestDTO(String uuid, Integer customerId, String paymentToken) {
         this.uuid = uuid;
         this.customerId = customerId;
         this.paymentToken = paymentToken;
-        this.bearerToken = bearerToken;
+        //this.bearerToken = bearerToken;
     }
 
     // Getters and Setters
@@ -25,6 +25,6 @@ public class OrderPlacedRequestDTO {
     public String getPaymentToken() { return paymentToken; }
     public void setPaymentToken(String paymentToken) { this.paymentToken = paymentToken; }
 
-    public String getBearerToken() { return bearerToken; }
-    public void setBearerToken(String bearerToken) {  this.bearerToken = bearerToken;  }
+    //public String getBearerToken() { return bearerToken; }
+    //public void setBearerToken(String bearerToken) {  this.bearerToken = bearerToken;  }
 }

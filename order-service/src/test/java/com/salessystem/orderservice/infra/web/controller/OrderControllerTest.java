@@ -103,7 +103,7 @@ class OrderControllerTest {
     void shouldCheckoutOrderSuccessfully() throws Exception {
         // Arrange
         String cartUuid = UUID.randomUUID().toString();
-        OrderPlacedRequestDTO requestDTO = new OrderPlacedRequestDTO(cartUuid, 123, "pay-token-xyz", "bearer-token-abc");
+        OrderPlacedRequestDTO requestDTO = new OrderPlacedRequestDTO(cartUuid, 123, "pay-token-xyz");
 
         Order updatedOrder = new Order();
         updatedOrder.setId(42);
@@ -113,7 +113,7 @@ class OrderControllerTest {
         updatedOrder.setPaymentStatus(SagaStatus.PENDING);
         updatedOrder.setTotalAmount(new BigDecimal("250.00"));
 
-        when(orderPlacedUseCase.execute(eq(cartUuid), eq(123), eq("pay-token-xyz"), eq("bearer-token-abc")))
+        when(orderPlacedUseCase.execute(eq(cartUuid), eq(123), eq("pay-token-xyz")))
                 .thenReturn(updatedOrder);
 
         // Act & Assert
@@ -190,10 +190,10 @@ class OrderControllerTest {
     @DisplayName("Should return HTTP 409 Conflict when trying to checkout an already closed cart")
     void shouldReturn400WhenCheckoutClosedCart() throws Exception {
         String cartUuid = UUID.randomUUID().toString();
-        OrderPlacedRequestDTO requestDTO = new OrderPlacedRequestDTO(cartUuid, 123, "pay-token", "bearer-token");
+        OrderPlacedRequestDTO requestDTO = new OrderPlacedRequestDTO(cartUuid, 123, "pay-token");
 
         // Simulating the illegal state exception
-        when(orderPlacedUseCase.execute(eq(cartUuid), eq(123), any(), any()))
+        when(orderPlacedUseCase.execute(eq(cartUuid), eq(123), any()))
                 .thenThrow(new IllegalOrderStateException("Shopping cart already closed. UUID:" + cartUuid));
 
         mockMvc.perform(post("/api/v1/orders/checkout")

@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="sales-web-bff" />
         <module name="payment-service" />
+        <module name="customer-auth-service" />
       </profile>
       <profile name="Annotation profile for order-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -24,6 +25,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="catalog-service" options="-parameters" />
+      <module name="customer-auth-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="payment-service" options="-parameters" />
       <module name="sales-web-bff" options="-parameters" />

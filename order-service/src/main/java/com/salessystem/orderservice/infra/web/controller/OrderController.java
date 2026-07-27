@@ -52,8 +52,7 @@ public class OrderController {
     public ResponseEntity<OrderStatusResponseDTO> checkout(@RequestBody OrderPlacedRequestDTO orderPlacedRequestDTO){
         // 1. executes the use case
         Order orderUpdated = orderPlacedUseCase.execute(orderPlacedRequestDTO.getUuid(),
-                orderPlacedRequestDTO.getCustomerId(), orderPlacedRequestDTO.getPaymentToken(),
-                orderPlacedRequestDTO.getBearerToken());
+                orderPlacedRequestDTO.getCustomerId(), orderPlacedRequestDTO.getPaymentToken());
 
         OrderStatusResponseDTO response = new OrderStatusResponseDTO (orderUpdated.getId(), orderUpdated.getCustomerId(),
                 orderUpdated.getStatus().name(), orderUpdated.getInventoryStatus().name(),

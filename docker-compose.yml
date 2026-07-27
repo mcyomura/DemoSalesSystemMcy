@@ -135,6 +135,33 @@ services:
       - sales-network
 
   # ==========================================
+  # MICROSERVICE: CUSTOMER-AUTH-SERVICE
+  # ==========================================
+  customer-auth-service:
+    build: ./customer-auth-service
+    container_name: customer-auth-service
+    ports:
+      - "8084:8084"
+    environment:
+      - MARIADB_URL=jdbc:mariadb://mariadb:3306/db_orders
+      - DB_APP_USER=appCustomerAuthService
+      - DB_APP_USER_PASSWD=tfdtjdnie924%
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - TZ=America/Sao_Paulo   #Logs at Sao Paulo timezone
+    extra_hosts: # to work with local DB (connects to localhost)
+      - "host-gateway:host-gateway"
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    depends_on:
+      - mariadb
+    networks:
+      - sales-network
+
+  # ==========================================
   # MICROSERVICE: BFF
   # ==========================================
   bff-service:
@@ -145,6 +172,7 @@ services:
     environment:
       - CATALOG_URL=http://catalog-service:8081
       - ORDER_URL=http://order-service:8082
+      - CUSTOMER_AUTH_URL=http://customer-auth-service:8084
       - TZ=America/Sao_Paulo   #Logs at Sao Paulo timezone
     extra_hosts: # to work with local DB (connects to localhost)
       - "host-gateway:host-gateway"

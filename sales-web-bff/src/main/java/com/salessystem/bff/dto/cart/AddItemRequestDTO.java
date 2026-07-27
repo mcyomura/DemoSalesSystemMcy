@@ -1,7 +1,7 @@
 package com.salessystem.bff.dto.cart;
 
 /**
- * DTO representing the request payload to add an item in the shopping cart.
+ * DTO representing the request payload to add an item in the shopping cart to send to order-service.
  * Located in the infrastructure layer as it handles external web request data.
  */
 public class AddItemRequestDTO {

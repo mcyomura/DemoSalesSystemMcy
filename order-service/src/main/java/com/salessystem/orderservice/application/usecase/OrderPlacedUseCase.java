@@ -21,7 +21,7 @@ public class OrderPlacedUseCase {
         this.orderMessageGateway = orderMessageGateway;
     }
 
-    public Order execute(String uuid, Integer customerId, String payToken, String bearerToken) {
+    public Order execute(String uuid, Integer customerId, String payToken) {
         Order order;
 
         // 1. Locate the cart
