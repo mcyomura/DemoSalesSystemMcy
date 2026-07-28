@@ -143,7 +143,7 @@ services:
     ports:
       - "8084:8084"
     environment:
-      - MARIADB_URL=jdbc:mariadb://mariadb:3306/db_orders
+      - MARIADB_URL=jdbc:mariadb://mariadb:3306/db_customer_auth
       - DB_APP_USER=appCustomerAuthService
       - DB_APP_USER_PASSWD=tfdtjdnie924%
       - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
