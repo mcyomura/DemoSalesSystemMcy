@@ -46,7 +46,7 @@ To demonstrate versatility, **the microservices implement different architectura
 ## SAGA choreography:
 Upon cart checkout, the workflow executes as follows:
 * **Order-service publishes** an **ORDER-PLACED event** to the order_events topic.
-* **Catalog-service consumes** the **ORDER-PLACED event** and deducts stock itens. It then sends a **SUCCESS event** on inventory_processed topic or a **FAILED event** if stock is insufficient for any product.
+* **Catalog-service consumes** the **ORDER-PLACED event** and deducts inventory/stock itens. It then sends a **SUCCESS event** on inventory_processed topic or a **FAILED event** if stock is insufficient for any product.
 * **Payment-service** at the same time, **consumes ORDER-PLACED event** and "process" (mocked) the payment. It then emits a **SUCCESS event** on payment_processed topic or a **FAILED event** if payment fails.
 * **Order-service listens for responses from both inventory_processed and payment_processed**:
 	* If **both events were SUCCESS**, it then changes the **order status to APPROVED**.
@@ -82,204 +82,186 @@ Dedicated dev and prod profiles (application.properties) were created to demonst
 * Wait 2-5 minutes for the services go up
 * Use postman to send the requests (see examples below)
 
+Github:
+```json
+{"token":"eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxIiwiZnVsbE5hbWUiOiJtY3lvbXVyYSIsImV4cCI6MTc4NTQzMzU4NCwiaWF0IjoxNzg1MzQ3MTg0LCJnaXRodWJJZCI6IjIxNzg0Mzg0MCJ9.c8s_LCN6g8lfRdUPwB3K-lNj_pSY2f4zdRtGKlkp82qLaDN6WL9O0OcPdrCcWfiT0Rkks5awhaBEX55UPVFhhDqVHlgAaRjymdi7-eJs8SebniNOLj8iQlallOoFRWgTHb2UGfKO37irJrjzVdgibGWKqM6ENFw36zcDvi3H6PEQYUUypTYk_XrrGjkhcer_RO340IQVt9icSRZd-tSazscvHJshEXiW-dWtPYhBDZ-xzLHZvxiMa3uvtsM3rtfh308ubfAhOsUql1coDfjyY9dm396iyehV-2cmUsMtiHIWr6zdvA9qfOYUd-IrZd0Uaql1D5k4v0MM3JAdQxagCw","tokenType":"Bearer","email":null,"fullName":"xxxxxx"}
+```
+
 ## Postman examples (usage)
-### Get paged list of products (default page = 0, size = 10):
-Method: GET  
-URL: http://localhost:8085/api/v1/salesbff/products (default) or
-http://localhost:8085/api/v1/salesbff/products?page=1&size=5 (paged)  
-Response:  
+### Get paged list of products:
+---
+**Request:**  
+**Method**: GET  
+**URL**: http://localhost:8085/api/v1/salesbff/products (default page = 0, size = 10) or
+http://localhost:8085/api/v1/salesbff/products?page=1&size=3 (paged)  
+
+**Response:**
 ```json
 {
     "content": [
         {
-            "description": "Touch control lamp with 3 intensity levels",
-            "id": 6,
-            "name": "LED Desk Lamp",
-            "price": 39.90,
-            "quantityInStock": 85,
-            "sku": "HOME-LAMP-LED-02",
-            "supplierName": "Home & Comfort Data"
-        },
-        {
-            "description": "L-shaped desk made of MDF wood",
-            "id": 7,
-            "name": "L-Shaped Office Desk",
-            "price": 349.00,
-            "quantityInStock": 15,
-            "sku": "HOME-DESK-L-03",
-            "supplierName": "Home & Comfort Data"
-        },
-        {
-            "description": "Pack of 10 silicone cable organizers",
-            "id": 8,
-            "name": "Cable Organizer Kit",
-            "price": 15.00,
-            "quantityInStock": 200,
-            "sku": "HOME-CABLE-ORG-04",
-            "supplierName": "Home & Comfort Data"
-        },
-        {
-            "description": "Orthopedic seat cushion for office chairs",
-            "id": 9,
-            "name": "Memory Foam Cushion",
-            "price": 79.90,
-            "quantityInStock": 45,
-            "sku": "HOME-CUSH-VIS-05",
-            "supplierName": "Home & Comfort Data"
-        },
-        {
             "description": "Articulated monitor arm with desk clamp",
             "id": 10,
             "name": "Dual Monitor Mount",
-            "price": 189.90,
-            "quantityInStock": 40,
+            "price": 189.9,
+            "quantityInStock": 37,
             "sku": "HOME-MONI-SUP-06",
+            "supplierName": "Home & Comfort Data"
+        },
+        {
+            "description": "Synthetic leather deskpad 90x40cm",
+            "id": 11,
+            "name": "Deskpad Keyboard Mat",
+            "price": 45.0,
+            "quantityInStock": 69,
+            "sku": "HOME-DESK-PAD-07",
+            "supplierName": "Home & Comfort Data"
+        },
+        {
+            "description": "Whiteboard for notes 90x60cm",
+            "id": 12,
+            "name": "Magnetic Whiteboard",
+            "price": 69.9,
+            "quantityInStock": 110,
+            "sku": "HOME-BRD-MAG-08",
             "supplierName": "Home & Comfort Data"
         }
     ],
-    "empty": false,
-    "first": false,
-    "last": false,
-    "number": 1,
-    "numberOfElements": 5,
-    "pageable": {
-        "offset": 5,
-        "pageNumber": 1,
-        "pageSize": 5,
-        "paged": true,
-        "sort": {
-            "empty": true,
-            "sorted": false,
-            "unsorted": true
-        },
-        "unpaged": false
-    },
-    "size": 5,
-    "sort": {
-        "empty": true,
-        "sorted": false,
-        "unsorted": true
-    },
-    "totalElements": 52,
-    "totalPages": 11
+    "page": {
+        "size": 3,
+        "number": 3,
+        "totalElements": 52,
+        "totalPages": 18
+    }
 }
 ```
 
 ### Get product details (valid products 1 to 52):
-Method: GET  
-URL: http://localhost:8085/api/v1/salesbff/products/1  
-Response:  
+---
+**Request:**  
+**Method**: GET    
+**URL**: http://localhost:8085/api/v1/salesbff/products/1  
+
+**Response:**
 ```json
 {
     "description": "Wireless mechanical keyboard with brown switches",
     "id": 1,
     "name": "Mechanical Keyboard RGB",
-    "price": 80.00,
-    "quantityInStock": 50,
+    "price": 89.99,
+    "quantityInStock": 46,
     "sku": "TECH-KEYB-RGB-BR",
     "supplierName": "Tech Components Ltd"
 }
 ```
 
 ### Add item to empty cart
-Method: POST  
-URL: http://localhost:8085/api/v1/salesbff/cart/items  
-Request: Select: Body - raw - JSON format and post:
+---
+**Request:**  
+**Method**: POST  
+**URL**: http://localhost:8085/api/v1/salesbff/cart/items  
+**Body**: Select: Body - raw - JSON format and post:  
 ```json
 {
    "productId": 1,
-   "quantity": 2
+   "quantity": 3
 }
 ```
-Response:
+**Response:**
 ```json
 {
-    "customerId": null,
+    "customerId": 751060,
     "items": [
         {
             "productId": 1,
-            "quantity": 2,
+            "quantity": 3,
             "unitaryPriceAtCart": 89.99
         }
     ],
     "pricesUpdated": false,
     "status": "DRAFT",
-    "totalAmount": 179.98,
-    "uuid": "e02107ef-61d0-41db-a402-406a9375c345"
+    "totalAmount": 269.97,
+    "uuid": "8fd55170-a6af-46ca-b06d-f8bb7d6055df"
 }
 ```
 
 ### Add item to existing cart
-Method: POST  
-URL: http://localhost:8085/api/v1/salesbff/cart/items  
-Request: Select: Body - raw - JSON format and post using the **"uuid" returned on previews call**  
+---
+**Request:**  
+**Method**: POST  
+**URL**: http://localhost:8085/api/v1/salesbff/cart/items  
+**Body**: Select: Body - raw - JSON format and post using the **"uuid" returned on previews call**  
 ```json
 {
-   "productId": 3,
+   "productId": 4,
    "quantity": 1,
-    "uuid": "e02107ef-61d0-41db-a402-406a9375c345"
+   "uuid": "8fd55170-a6af-46ca-b06d-f8bb7d6055df"
 }
 ```
-Response:  
+**Response:**  
 ```json
 {
-    "customerId": null,
+    "customerId": 252301,
     "items": [
         {
             "productId": 1,
-            "quantity": 2,
+            "quantity": 3,
             "unitaryPriceAtCart": 89.99
         },
         {
-            "productId": 3,
+            "productId": 4,
             "quantity": 1,
             "unitaryPriceAtCart": 29.90
         }
     ],
     "pricesUpdated": false,
     "status": "DRAFT",
-    "totalAmount": 209.88,
-    "uuid": "e02107ef-61d0-41db-a402-406a9375c345"
+    "totalAmount": 299.87,
+    "uuid": "8fd55170-a6af-46ca-b06d-f8bb7d6055df"
 }
 ```
 
 ### Proceed to cart checkout
-Method: POST  
-URL: http://localhost:8085/api/v1/salesbff/cart/checkout  
-Request: Select: Body - raw - JSON format and post using the **"uuid" returned on previews call**. If you want a declined payment, make the paymentToken ending with "99"  
-Post:  
+---
+**Request:**  
+**Method**: POST  
+**URL**: http://localhost:8085/api/v1/salesbff/cart/checkout  
+**Authorization**: Select type = bearer token, post the code obtained at login without the **" "**.  
+**Body**: Body - raw - JSON format and post using the **"uuid" returned on previews call**. If you want a declined payment, make the paymentToken ending with "99"  
 ```json
 {
-   "uuid":  "e02107ef-61d0-41db-a402-406a9375c345",
-   "customerId": "82732917",
-   "paymentToken": "fioej2",
-   "bearerToken": "fjioejf"
+   "uuid": "8fd55170-a6af-46ca-b06d-f8bb7d6055df",
+   "paymentToken": "fioeJIEFHD"
 }
 ```
-Response: 
+**Response:** 
 ```json
 {
-    "id": 1,
-    "customerId": 82732917,
+    "id": 5,
+    "customerId": 791832,
     "status": "PENDING",
     "inventory_status": "PENDING",
     "payment_status": "PENDING",
-    "totalAmount": 59.80
+    "totalAmount": 299.87
 }
 ```
 
 
-### Check cart status (use as parameter the **"id" returned during checkout**)
-Method: GET  
-URL: http://localhost:8085/api/v1/salesbff/cart/2  
-Response:   
+### Check cart status 
+---
+**Request:**  
+**Method**: GET  
+**URL**: http://localhost:8085/api/v1/salesbff/cart/5  (use as parameter the **"id" returned during checkout**)   
+**Authorization**: Select type = bearer token, post the code obtained at login without the **" "**.  
+
+**Response:** 
 ```json
 {
-    "id": 1,
-    "customerId": 82732917,
+    "id": 5,
+    "customerId": 791832,
     "status": "APPROVED",
     "inventory_status": "SUCCESS",
     "payment_status": "SUCCESS",
-    "totalAmount": 59.80
+    "totalAmount": 299.87
 }
 ```
