@@ -69,9 +69,21 @@ Dedicated dev and prod profiles (application.properties) were created to demonst
 * Infrastructure Governance: In a real-world production setup, Kafka topics would be managed via Infrastructure as Code (IaC) rather than auto-creation. Infrastructure URLs, servers, and networks would also be strictly segmented across environments.
 * Secrets Management & Key Rotation: In customer-auth-service, RSA key pairs would be securely managed using a vault. Key rotation (currently triggered via a local CRON) should be decoupled into an isolated scheduler (e.g., Control-M or a dedicated lightweight trigger service) to prevent race conditions when running multiple instances/pods.
 
-# Running the demo
+# Running the demo  
+> **Note on Authentication (v1.0.6+):** Starting from release **v1.0.6**, OAuth2 login via GitHub is required to execute authenticated operations. If you prefer to test the system without GitHub OAuth setup, please download [Release v1.0.5](https://github.com/mcyomura/DemoSalesSystemMcy/releases/tag/v1.0.5) and use its readme version.
+
+## Prerequisites & Setup (v1.0.6+)  
+1. **Tools**: Java 21, Docker Desktop, Docker compose, Github Account
+2. **GitHub OAuth App Registration:**
+   * Go to **GitHub Settings** > **Developer Settings** > **OAuth Apps** > **New OAuth App**.
+   * Set **Authorization callback URL** to:
+     `http://localhost:8085/api/v1/salesbff/auth2/callback`
+   * Generate and copy your **Client ID** and **Client Secret**.
+3. **Environment File Configuration:**
+   * Rename the .env.example file to .env and fill in the Client ID and Client Secret generated in the last step
+     
 ## Instructions to run
-* Download the zip (from release v1.0.6 on you must have a Github login and make some configuration in order to run some operations, download v1.0.5 if you want to avoid this)
+* Download the zip 
 * I would build one service at a time:
 	* docker compose build bff-service
 	* docker compose build order-service
@@ -80,12 +92,13 @@ Dedicated dev and prod profiles (application.properties) were created to demonst
 	* docker compose build customer-auth-service
 * Run the containers: docker compose up -d
 * Wait 2-5 minutes for the services go up
-* Use postman to send the requests (see examples below)
-
-Github:
+* Open your browser and navigate to the GitHub authorization URL - replace YOUR_GITHUB_CLIENT_ID and YOUR_GITHUB_LOGIN_EMAIL: https://github.com/login/oauth/authorize?client_id=YOUR_GITHUB_CLIENT_ID&scope=read:user,user:YOUR_GITHUB_LOGIN_EMAIL
+* After authorizing, GitHub redirects to your callback URL with a token like this:
 ```json
-{"token":"eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxIiwiZnVsbE5hbWUiOiJtY3lvbXVyYSIsImV4cCI6MTc4NTQzMzU4NCwiaWF0IjoxNzg1MzQ3MTg0LCJnaXRodWJJZCI6IjIxNzg0Mzg0MCJ9.c8s_LCN6g8lfRdUPwB3K-lNj_pSY2f4zdRtGKlkp82qLaDN6WL9O0OcPdrCcWfiT0Rkks5awhaBEX55UPVFhhDqVHlgAaRjymdi7-eJs8SebniNOLj8iQlallOoFRWgTHb2UGfKO37irJrjzVdgibGWKqM6ENFw36zcDvi3H6PEQYUUypTYk_XrrGjkhcer_RO340IQVt9icSRZd-tSazscvHJshEXiW-dWtPYhBDZ-xzLHZvxiMa3uvtsM3rtfh308ubfAhOsUql1coDfjyY9dm396iyehV-2cmUsMtiHIWr6zdvA9qfOYUd-IrZd0Uaql1D5k4v0MM3JAdQxagCw","tokenType":"Bearer","email":null,"fullName":"xxxxxx"}
+{"token":"A LONG TOKEN IN HERE","tokenType":"Bearer","email":null,"fullName":"xxxxxx"}
 ```
+* Copy the token (the piece inside the quotation marks, i.e. without the quotation marks) and use it when **Authorization** is needed.
+* Use postman to send the requests (see examples below)
 
 ## Postman examples (usage)
 ### Get paged list of products:
