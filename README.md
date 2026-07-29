@@ -1,69 +1,77 @@
 # Introduction
 ## Goal
-I started my career as developer, but I've worked as architect (enterprise, business, it architect, solution architect) in the past 15 years. I'm planning to return to development (reason is that it is a more standalone role, to work with people in different timezones) and for that I took some courses to get updated and to put all that in practice, I developed this demo. So, I have a great view as architect and now I'm rejoining this view with the engineer, I'm a developer who really understands the whole environment.
+I started my career as a developer and have spent the past 15 years working as an architect (Enterprise, Business, IT, and Solution Architect). As I plan my return to hands-on development—driven by the autonomy of the role and the flexibility to collaborate across different time zones — I refreshed my technical skills through specialized courses and built this demonstration project to put those concepts into practice.
 
-This is a **portfolio program**, the goal is to present skills in programming (microservices, Springboot 4, java 21, JPA, Kafka, Feign, MapStruct, API Doc, Docker).
+By combining a strong architectural background with hands-on engineering, I bring a holistic view to software development, truly understanding the complete ecosystem.
 
-This backend Sales System consists of 5 microservices and 2 infrastructure containers configured for demonstration. To showcase distributed transactions with **Kafka**, I intentionally designed topics with multiple subscribers to implement a **choreographed SAGA pattern**. Building this provided invaluable hands-on experience in handling event-driven choreography and compensation logic.
+This is a **portfolio program** designed to showcase proficiency in modern backend development and distributed systems using Java 21, Spring Boot 4, JPA, Kafka, Feign, MapStruct, OpenAPI/Swagger, and Docker.
+
+The backend Sales System consists of 5 microservices and 2 infrastructure containers configured for demonstration. To showcase distributed transactions with **Kafka**, I intentionally designed topics with multiple subscribers to implement a **choreographed SAGA pattern**. Building this provided invaluable hands-on experience in handling event-driven choreography and compensation logic.
 
 # About the development
-## C4 - Level 1
-A high level (context) diagram showing main Sales System and external integrations.
+## C4 - Level 1 (Context)
+A high-level diagram illustrating the core Sales System and its external integrations.
 
 ![C4 Level 1](Documentation/C4_Sales_System-C4-L1.drawio.png)
-## C4 - Level 2
-Shows the microservices, databases, messaging topics. Filled in blue the scope of the demo.
+## C4 - Level 2 (Containers)
+Shows the microservices, databases, and messaging topics. The scope of this demo is filled in blue.
 
 ![C4 Level 2](Documentation/C4_Sales_System-C4-L2.drawio.png)
 
 ## Design patterns
-For the demo I cared to use **different code design patterns**, so I have microservices implemented using **MVC, Clean architecture and hexagonal** pattern (C4 L2 documents this).
+To demonstrate versatility, **the microservices implement different architectural patterns**, including standard **MVC**, **Clean** Architecture, and **Hexagonal Architecture** (documented in C4 Level 2).
 
-## Other docs: Sequence diagram, database entity diagram and swaggers
-* Sequence diagram: [Sequence diagram](Documentation/C4_Sales_System-Sequence_diagram.drawio.png) shows the interaction between the components.
-* Entity relationship diagrams: [db-orders](Documentation/C4_Sales_System-db-orders.drawio.png), [db-catalog](Documentation/C4_Sales_System-db-catalog.drawio.png), [db-payment](Documentation/C4_Sales_System-db-payment.drawio.png), [db-customer-auth](Documentation/C4_Sales_System-db-customer-auth.drawio.png). In case you wish to connect the database via DBeaver or other.
-* State machine:  [State machine diagram](Documentation/C4_Sales_System-State_machine.drawio.png) shows cart and SAGA statuses.
-* The swaggers (only BFF will be externally exposed, but I provide internal swaggers as well):
+## Other Documentation Artifacts
+* **Sequence diagrams**: [Sequence diagram](Documentation/C4_Sales_System-Sequence_diagram.drawio.png) shows component interactions across key flows.
+* **Entity relationship diagrams (ERDs)**: [db-orders](Documentation/C4_Sales_System-db-orders.drawio.png), [db-catalog](Documentation/C4_Sales_System-db-catalog.drawio.png), [db-payment](Documentation/C4_Sales_System-db-payment.drawio.png), [db-customer-auth](Documentation/C4_Sales_System-db-customer-auth.drawio.png) (useful when connecting directly to databases via DBeaver or similar tools).
+* **State machine**:  [State machine diagram](Documentation/C4_Sales_System-State_machine.drawio.png) shows cart and SAGA statuses.
+* The swaggers - While only the BFF is intended for external exposure through an API Gateway in production, specs are provided for all services:
 	* [bff](Documentation/swagger_bff.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_bff.json)  
  	* [order](Documentation/swagger_order-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_order-service.json)  
   	* [catalog](Documentation/swagger_catalog-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_catalog-service.json)
   	* [customer-auth](Documentation/swagger_customer-auth-service.json) or at [swagger editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mcyomura/DemoSalesSystemMcy/refs/heads/master/Documentation/swagger_customer-auth-service.json) 
 
+# Services overview
 ## Microservices:
-* **sales-web-bff (8085):** the only microservice supposed to expose its endpoints through an API Manager.
-* **order-service (8082):** deals with the cart (add items, calculate total amount, check if prices are stalled, process cart checkout).
-* **catalog-service (8081):** owns product catalog and inventory (stock).
-* **payment-service(8083):** a microservice mocking interaction with payment provider. It receives a payment token (payment token is to be created by the UI using a SDK from a payment provider, the service is to confirm the payment with the provider, as well as process refund when needed). In this demo to mock a declined payment you just pass a payment token ending "99".
-* **Customer-auth-service(8084):** authenticates with an idP, for the demo it uses GitHub, as it requires zero infrastructure, leverages developers' existing accounts, and uses standard OAuth 2.0.
+* **sales-web-bff (8085):** The only microservice intended to expose its endpoints externally via an API Gateway.
+* **order-service (8082):** Manages the cart lifecycle (adding items, calculating totals, checking for stale prices, and processing checkout).
+* **catalog-service (8081):** Owns product catalog and inventory/stock management.
+* **payment-service(8083):** Mocks integration with a payment provider. It receives a payment token (typically generated client-side via a provider SDK), confirms transactions, and issues refunds when necessary. Note: In this demo, passing a payment token ending in 99 simulates a declined payment.
+* **customer-auth-service (8084):** Handles authentication with an Identity Provider (IdP). For this demo, it **integrates with GitHub OAuth 2.0** to eliminate custom infra overhead and leverage existing developer accounts.
 
 ## Infrastructure containers:
-* **kafka:** version running using kafka
-* **MariaDB:** I started the local project with MySql, but migrated to MariaDB (lighter) in containers. Note that although I have instantiated a single container, the schemas are totally independent. For that I used different application users, so the catalog database has the root and appCatalogService users, and the catalog microservice is configured to connect using the appCatalogService user only.
+* **kafka:** Message broker handling distributed event streaming.
+* **MariaDB:** I started the local project with MySql, but migrated to MariaDB (lighter) in containers. Although a single database container is used, database schemas remain fully isolated using distinct database users (e.g., catalog-service connects strictly via appCatalogService user credentials).
 
 ## SAGA choreography:
-Upon a cart checkout:
-* **Order-service sends** an **ORDER-PLACED event** (order_events topic)
-* **Catalog-service process ORDER-PLACED event** and deduct stock itens. It then sends a **SUCCESS event** in the inventory_processed topic or a **FAILED event** if any product had not enough stock.
-* **Payment-service** at the same time, **process ORDER-PLACED event** and "process" (mocked) the payment. It then sends a **SUCCESS event** in the payment_processed topic or a **FAILED event** if payment was rejected.
-* **Order-service receive back both events** from inventory_processed and payment_processed. If **both were SUCCESS**, it then changes the **order status to APPROVED**. If payment/inventory sent a FAILED event, then the order status goes to **CANCELED** and an **STOCK_DECLINED/PAYMENT_DECLINED event** or both is sent. Note: we used an @Version, so that if both events are processed at the same time, and both READ the database before commiting the status change, what will happen is that the first will commit, the second will fail throwing an exception, then kafkaErrorConfig will capture the exception and do not commit the message, that will go to the next attempt and will finally be successfully processed (in the second attempt to process the kafka event).
-* If a **STOCK_DECLINED event** were sent, then payment-service will process a **refund** and send back a **REFUNDED** event to update order-service record.
-* If a **PAYMENT_DECLINED event** were sent, then catalog-service will process the **stock return** and send back a **RETURNED** event to update order-service record.
-* **Notes about the SAGA**: I already mentioned at paragraph 4 (in this section) about the @Version. Another SAGA detail is that to avoid a canceled operation to be processed before an order-placed operation, we use the order_events topic and use the **UUID as the key**, the usage of a key guarantees that the first event (order-placed) will be processed BEFORE any cancelation event for the same order.
+Upon cart checkout, the workflow executes as follows:
+* **Order-service publishes** an **ORDER-PLACED event** to the order_events topic.
+* **Catalog-service consumes** the **ORDER-PLACED event** and deducts stock itens. It then sends a **SUCCESS event** on inventory_processed topic or a **FAILED event** if stock is insufficient for any product.
+* **Payment-service** at the same time, **consumes ORDER-PLACED event** and "process" (mocked) the payment. It then emits a **SUCCESS event** on payment_processed topic or a **FAILED event** if payment fails.
+* **Order-service listens for responses from both inventory_processed and payment_processed**:
+	* If **both events were SUCCESS**, it then changes the **order status to APPROVED**.
+   	* If payment/inventory published a FAILED event, then the order status changes to **CANCELED** and an **STOCK_DECLINED/PAYMENT_DECLINED event** or both is sent.
+* Compensation handling:
+	* If a **STOCK_DECLINED event** were raised, then payment-service will process a **refund** and publishes back (inventory-processed topic) a **REFUNDED** event to update order-service record.
+	* If a **PAYMENT_DECLINED event** were raised, then catalog-service will process the **stock return** and publishes back (payment-processed topic) a **RETURNED** event to update order-service record.
 
+Technical SAGA Considerations:
+* **Optimistic Locking (@Version)**: To handle concurrent updates when both inventory and payment events arrive simultaneously, @Version is used. If two events read the state concurrently, the first commit succeeds while the second fails with an optimistic locking exception. **kafkaErrorConfig** intercepts this failure and retries, allowing the second event to succeed on its next attempt against the newly updated state.
+* Event Ordering: To prevent cancellation or compensation events from executing BEFORE an ORDER-PLACED event, **all related messages** publish to the order_events topic **using the Order UUID as the partition key**. This guarantees strict, sequential processing per order.
+    
 ## Usage of AI
 AI is undeniably here to stay. However, since my primary goal with this project was to solidify my understanding of core concepts, I initially limited AI usage to clarifying doubts, brainstorming, and guiding the initial setup. Toward the end—specifically for automated testing and the final microservice—I experimented with AI-assisted coding. While it significantly boosts productivity, I concluded that developers must deeply understand the underlying code to effectively evaluate, correct, and steer AI-generated outputs.
 
 ## Dev vs Hom vs Prod environment
-I cared to produce dev and prod application.properties, just for the concept. 
-In the demo there's not much diff between them:
-* The swagger is generated only in dev profile. 
-* In dev time for the price to get stalled is 10 minutes, in production is 6 hours.
-* Infrastructures: In a real scenario I consider the kafka topics would not be generated by the code (for governance purposes), urls and servers infrastructures should be different as well.
-* In the customer-auth-service for a real environment we need a vault to store the RSA keys pair. I also used a CRON to refresh the keys, which is supposed to be called once (i.e. you need to have only 1 POD). In a real environment you use a scheduler like Control-M or.. you separate just the scheduler in a small service just to be used as a trigger to rotate the keys in a vault. 
+Dedicated dev and prod profiles (application.properties) were created to demonstrate configuration management best practices:
+* Swagger/OpenAPI: Exposed exclusively under the dev profile.
+* Price Expiration: Price staleness threshold is set to 10 minutes in dev versus 6 hours in prod
+* Infrastructure Governance: In a real-world production setup, Kafka topics would be managed via Infrastructure as Code (IaC) rather than auto-creation. Infrastructure URLs, servers, and networks would also be strictly segmented across environments.
+* Secrets Management & Key Rotation: In customer-auth-service, RSA key pairs would be securely managed using a vault. Key rotation (currently triggered via a local CRON) should be decoupled into an isolated scheduler (e.g., Control-M or a dedicated lightweight trigger service) to prevent race conditions when running multiple instances/pods.
 
 # Running the demo
 ## Instructions to run
-* Download the zip (from release v1.0.6 on you must have a Github login to some operations, download v1.0.5 if you want to avoid authentication)
+* Download the zip (from release v1.0.6 on you must have a Github login and make some configuration in order to run some operations, download v1.0.5 if you want to avoid this)
 * I would build one service at a time:
 	* docker compose build bff-service
 	* docker compose build order-service
